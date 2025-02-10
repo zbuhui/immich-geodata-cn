@@ -1,5 +1,5 @@
 import os
-from utils import logger
+from utils import logger, GEODATA_HEADER
 
 MIN_POPULATION = 100
 
@@ -29,7 +29,12 @@ def need_finer_data(data):
 
 # 读取 cities500.txt 中的所有 id
 with open(cities_file, "r") as f:
-    existing_ids = set(line.split("\t")[0] for line in f)
+    existing_ids = set()
+    existing_loc = set()
+    for line in f:
+        d = line.split("\t")
+        existing_ids.add(d[0])
+        existing_loc.add((d[4], d[5]))
 
 with open(cities_file, "a") as append_f:
     # 遍历 extra_data 文件夹中的所有 txt 文件
@@ -45,6 +50,7 @@ with open(cities_file, "a") as append_f:
 
                     # 第一个 id
                     id_value = columns[0]
+                    loc = (columns[4], columns[5])
 
                     try:
                         num_value = float(columns[14])
@@ -52,11 +58,14 @@ with open(cities_file, "a") as append_f:
                         continue  # 如果无法转换为数字，跳过此行
 
                     # 判断是否满足追加条件
-                    if id_value not in existing_ids and (
-                        num_value >= MIN_POPULATION or need_finer_data(columns)
+                    if (
+                        id_value not in existing_ids
+                        and (num_value >= MIN_POPULATION or need_finer_data(columns))
+                        and loc not in existing_loc
                     ):
                         c += 1
                         append_f.write(line)
                         existing_ids.add(id_value)  # 添加到已存在的 id 集合中
+                        existing_loc.add(loc)
 
                 logger.info(f"共 {c} 条数据被追加")

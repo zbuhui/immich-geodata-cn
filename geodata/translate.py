@@ -117,9 +117,6 @@ def translate_cities500():
 
 
 def translate_admin1():
-    logger.info("加载 alternateNamesV2 完成")
-
-    # input_file = './geoname_data/admin1CodesASCII.txt'
     def process(input_file):
         if not os.path.exists(input_file):
             logger.error(f"输入文件 {input_file} 不存在")

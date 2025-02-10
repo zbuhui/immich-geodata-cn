@@ -17,6 +17,8 @@
 > 分为 [自动更新发布](https://github.com/ZingLix/immich-geodata-cn/releases/tag/auto-release) 和 [手动发布](https://github.com/ZingLix/immich-geodata-cn/releases)  
 >
 > 前者数据一般较新推荐使用，但可能遇到数据源变动等原因导致生成出的数据不可用，此时建议切换至后者并提 issue 告诉我
+>
+> **BETA** Release 中 geodata_full.zip 是数据量更大的版本，会在边界的情况下表现更好，但可能会导致识别位置时较慢以及含有过时数据，建议在遇到边界场景识别错误时使用
 
 2. 调整你的 docker-compose.yaml，volumes 中增加如下两行（或者根据不同部署方式任意方式替换掉这两个文件夹）
 

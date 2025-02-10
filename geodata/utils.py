@@ -58,30 +58,58 @@ def ensure_folder_exists(file_path):
 
 
 def load_alternate_name(file_path):
+    # 定义语言优先级列表，索引越小优先级越高
     priority = ["zh", "zh-Hans", "zh-SG", "zh-Hant", "zh-HK"]
+    # mapping 存储：数字 -> (名称, 优先级, id, prefer)
     mapping = {}
     count = 0
+
     with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
             count += 1
             if count % 1000000 == 0:
-                logger.info(f"{count} 条 alternateName 数据已加载")
+                logger.info(f"{count} 条 alternateName 数据已处理")
             parts = line.split("\t")
             if len(parts) < 5:
                 continue  # 忽略格式不正确的行
 
-            _, number, lang, name, prefer = parts[:5]  # 提取第二个数字、语言代码和中文名
+            alt_id, number, lang, name, prefer = parts[:5]
+            alt_id = int(alt_id)
 
-            # 检查是否符合优先级并更新映射关系
-            if lang in priority:
-                current_priority = priority.index(lang)
-                if (
-                    number not in mapping
-                    or current_priority < mapping[number][1]
-                    or (current_priority == mapping[number][1] and prefer == "1")
-                ):
-                    mapping[number] = (name, current_priority)
+            if lang not in priority:
+                continue
 
+            current_priority = priority.index(lang)
+            # 如果该数字尚未记录，则直接保存
+            if number not in mapping:
+                mapping[number] = (name, current_priority, alt_id, prefer)
+            else:
+                stored_name, stored_priority, stored_id, stored_prefer = mapping[number]
+                # 如果当前记录的语言优先级更高，则更新（无论 prefer 与否）
+                if current_priority < stored_priority:
+                    mapping[number] = (name, current_priority, alt_id, prefer)
+                # 如果优先级相同，则需要做进一步判断
+                elif current_priority == stored_priority:
+                    # 如果已有记录已经是 prefer 的，则保持不变，不允许被覆盖
+                    if stored_prefer == "1":
+                        continue
+                    else:
+                        # 如果新记录的 prefer 为 "1"，说明它具有更高优先级，更新映射
+                        if prefer == "1":
+                            mapping[number] = (name, current_priority, alt_id, prefer)
+                        # 否则在没有 prefer 的情况下，若 id 不同则更新（即认为是新的记录）
+                        elif alt_id >= stored_id:
+                            mapping[number] = (name, current_priority, alt_id, prefer)
+                        # 否则（id 相同且都没有 prefer），保持原记录不变
     logger.info(f"共加载 {len(mapping)} 条中文 alternateName 数据")
     # 返回最终映射字典，仅保留数字到中文名的映射
-    return {key: value[0] for key, value in mapping.items()}
+    d = {key: value[0] for key, value in mapping.items()}
+
+    with open("./dict.txt") as f:
+        for l in f:
+            if len(l) == 0:
+                continue
+            id, name = l.strip().split("\t")
+            d[id] = name
+
+    return d
