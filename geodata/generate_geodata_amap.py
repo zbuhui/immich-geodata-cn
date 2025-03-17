@@ -79,9 +79,9 @@ def query_and_store(coordinates_batch, output_file):
                     "admin_2": (
                         address["city"] if address["city"] else address["district"]
                     ),
-                    "admin_3": address["district"]
-                    if address["district"]
-                    else address["city"],
+                    "admin_3": (
+                        address["district"] if address["district"] else address["city"]
+                    ),
                     "admin_4": address["township"],
                 }
                 for k in x:

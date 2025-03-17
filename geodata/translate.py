@@ -1,8 +1,22 @@
+import argparse
 import csv
 from utils import load_geo_data, ensure_folder_exists, logger, load_alternate_name
 import os
 import opencc
 from zhconv import convert
+
+parser = argparse.ArgumentParser(description="Parse cn_pattern argument.")
+parser.add_argument(
+    "--cn-pattern",
+    type=str,
+    default="{admin_2}",
+    help="Pattern parameter, default is {admin_2}",
+)
+parser.add_argument(
+    "--output", type=str, default="output/cities500.txt", help="Output file path"
+)
+args = parser.parse_args()
+cn_pattern = args.cn_pattern
 
 alternate_name_folder = "./geoname_data"
 alternate_name = load_alternate_name(
@@ -56,7 +70,7 @@ def translate_cities500():
         logger.error(f"输入文件 {input_file} 不存在")
         return
 
-    output_file = f"output/{os.path.basename(input_file)}"
+    output_file = args.output
     ensure_folder_exists(output_file)
 
     with open(input_file, "r", encoding="utf-8") as infile, open(
@@ -70,32 +84,35 @@ def translate_cities500():
             latitude = str(row[4])  # 纬度
             longitude = str(row[5])  # 经度
 
+            translated_name = None
+
             if (
                 country_code in geodata
                 and (longitude, latitude) in geodata[country_code]
             ):
                 location = geodata[country_code][(longitude, latitude)]
-                res = location["admin_2"]
-                res = convert(res, "zh-cn")
+                if country_code == "CN":
+                    res = cn_pattern.format(**location)
+                else:
+                    res = location["admin_2"]
+                    res = convert(res, "zh-cn")
 
-                # 处理同时存在简繁名字的场景，例如 	东京都/東京都
-                # 如果简化后都一样，就只取简化名
-                if "/" in res:
-                    t = res.split("/")
-                    t = [i.strip() for i in t]
-                    if len(set(t)) == 1:
-                        res = t[0]
+                    # 处理同时存在简繁名字的场景，例如 	东京都/東京都
+                    # 如果简化后都一样，就只取简化名
+                    if "/" in res:
+                        t = res.split("/")
+                        t = [i.strip() for i in t]
+                        if len(set(t)) == 1:
+                            res = t[0]
                 if res:
-                    row[1] = res
-                    row[2] = res
+                    translated_name = res
 
-            elif row[0] in alternate_name:
+            if translated_name is None and row[0] in alternate_name:
                 name = alternate_name[row[0]]
                 name = convert(name, "zh-cn")
-                row[1] = name
-                row[2] = name
+                translated_name = name
 
-            else:
+            if translated_name is None:
                 candidates = row[3].split(",")
                 simplified_word = next(
                     (word for word in candidates if is_simplified_chinese(word)), None
@@ -106,11 +123,13 @@ def translate_cities500():
 
                 # 替换第二列内容，优先简体中文词，其次繁体中文词
                 if simplified_word:
-                    row[1] = simplified_word
-                    row[2] = row[1]
+                    translated_name = simplified_word
                 elif traditional_word:
-                    row[1] = convert(traditional_word, "zh-cn")
-                    row[2] = row[1]
+                    translated_name = convert(traditional_word, "zh-cn")
+
+            if translated_name is not None:
+                row[1] = translated_name
+                row[2] = translated_name
 
             # 写入处理后的行到输出文件
             writer.writerow(row)

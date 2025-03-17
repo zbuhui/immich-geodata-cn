@@ -7,8 +7,9 @@ cd "$(dirname "$0")"
 
 # 获取当前脚本文件名
 script_name=$(basename "$0")
+geodata_name=${1:-geodata}
 
-echo "开始获取 ZingLix/immich-geodata-cn 仓库最新的 geodata.zip 文件..."
+echo "开始获取 ZingLix/immich-geodata-cn 仓库最新的 $geodata_name.zip 文件..."
 
 # 获取最新 release 的 API URL
 LATEST_RELEASE_API="https://api.github.com/repos/ZingLix/immich-geodata-cn/releases/latest"
@@ -21,23 +22,23 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # 从返回的 JSON 中提取 geodata.zip 的下载 URL
-zip_url=$(echo "$response" | grep -oP '"browser_download_url":\s*"\K(.*geodata\.zip)(?=")')
+zip_url=$(echo "$response" | grep -oP '"browser_download_url":\s*"\K(.*$geodata_name\.zip)(?=")')
 if [[ -z $zip_url ]]; then
-  echo "错误：未找到 geodata.zip 的下载链接，请检查仓库的最新 release。"
+  echo "错误：未找到 $geodata_name.zip 的下载链接，请检查仓库的最新 release。"
   exit 1
 fi
 
-echo "最新的 geodata.zip 文件下载地址为：$zip_url"
+echo "最新的 $geodata_name.zip 文件下载地址为：$zip_url"
 
 # 下载 geodata.zip
-echo "开始下载 geodata.zip 文件..."
+echo "开始下载 $geodata_name.zip 文件..."
 curl -L -o geodata.zip "$zip_url"
 if [[ $? -ne 0 ]]; then
   echo "错误：geodata.zip 下载失败，请检查网络连接。"
   exit 1
 fi
 
-echo "geodata.zip 下载成功！"
+echo "$geodata_name.zip 下载成功！"
 
 # 解压 geodata.zip 文件
 echo "开始解压 geodata.zip 文件..."
