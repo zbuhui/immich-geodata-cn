@@ -81,6 +81,7 @@ for item in "${LIST[@]}"; do
     fi
 done
 
+rm -rf geodata
 cp geodata_admin_2.zip geodata.zip
 cp output_tmp/cities500_{admin_2}.txt output/cities500.txt
 
