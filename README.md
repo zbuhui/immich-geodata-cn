@@ -19,6 +19,8 @@
 > 前者数据一般较新推荐使用，但可能遇到数据源变动等原因导致生成出的数据不可用，此时建议切换至后者并提 issue 告诉我
 >
 > **BETA** Release 中 geodata_full.zip 是数据量更大的版本，会在边界的情况下表现更好，但可能会导致识别位置时较慢以及含有过时数据，建议在遇到边界场景识别错误时使用
+> 
+> **BETA** 提供了精细到三级、四级行政区的文件，详细信息请查看 release 页面
 
 2. 调整你的 docker-compose.yaml，volumes 中增加如下两行（或者根据不同部署方式任意方式替换掉这两个文件夹）
 
@@ -46,8 +48,8 @@ volumes:
 # 下载脚本
 curl -o update.sh https://raw.githubusercontent.com/ZingLix/immich-geodata-cn/refs/heads/main/geodata/update.sh
 
-# 运行
-bash update.sh
+# 运行，
+bash update.sh geodata_admin_2
 ```
 
 运行完成后需要重启 Immich 重新加载数据。如果希望自动重启，可以在脚本最后增加类似 `docker restart immich_server` 的命令进行重启，或者通过类似如下定时任务的方式一起运行重启。

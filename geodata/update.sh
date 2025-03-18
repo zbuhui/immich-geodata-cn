@@ -22,7 +22,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # 从返回的 JSON 中提取 geodata.zip 的下载 URL
-zip_url=$(echo "$response" | grep -oP '"browser_download_url":\s*"\K(.*$geodata_name\.zip)(?=")')
+zip_url=$(echo "$response" | grep -oP '"browser_download_url":\s*"\K(.*'"$geodata_name"'\.zip)(?=")')
 if [[ -z $zip_url ]]; then
   echo "错误：未找到 $geodata_name.zip 的下载链接，请检查仓库的最新 release。"
   exit 1
