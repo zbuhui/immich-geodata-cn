@@ -9,8 +9,15 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--data-file", type=str, default="./geoname_data/cities500.txt", help="input geodata file")
-parser.add_argument("--country-code", type=str, default="CN", help="country code to be generated")
+parser.add_argument(
+    "--data-file",
+    type=str,
+    default="./geoname_data/cities500.txt",
+    help="input geodata file",
+)
+parser.add_argument(
+    "--country-code", type=str, default="CN", help="country code to be generated"
+)
 # 解析参数
 args = parser.parse_args()
 

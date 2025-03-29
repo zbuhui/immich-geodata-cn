@@ -7,7 +7,10 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--full", action="store_true", help="Enable full mode")
 parser.add_argument(
-    "--output", type=str, default="./geoname_data/cities500.txt.tmp", help="Output cities500 file"
+    "--output",
+    type=str,
+    default="./geoname_data/cities500.txt.tmp",
+    help="Output cities500 file",
 )
 
 # 解析参数

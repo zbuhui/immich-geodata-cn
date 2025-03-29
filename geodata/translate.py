@@ -12,11 +12,12 @@ parser.add_argument(
     default="{admin_2}",
     help="Pattern parameter, default is {admin_2}",
 )
+parser.add_argument("--output", type=str, default="output", help="Output folder path")
 parser.add_argument(
-    "--output", type=str, default="output", help="Output folder path"
-)
-parser.add_argument(
-    "--input-cities500", type=str, default="./geoname_data/cities500.txt", help="Output folder path"
+    "--input-cities500",
+    type=str,
+    default="./geoname_data/cities500.txt",
+    help="Output folder path",
 )
 args = parser.parse_args()
 cn_pattern = args.cn_pattern
@@ -73,7 +74,7 @@ def translate_cities500():
         logger.error(f"输入文件 {input_file} 不存在")
         return
 
-    output_file = os.path.join(args.output, "cities500.txt") 
+    output_file = os.path.join(args.output, "cities500.txt")
     ensure_folder_exists(output_file)
 
     with open(input_file, "r", encoding="utf-8") as infile, open(
@@ -144,7 +145,7 @@ def translate_admin1():
             logger.error(f"输入文件 {input_file} 不存在")
             return
 
-        output_file = os.path.join(args.output, os.path.basename(input_file)) 
+        output_file = os.path.join(args.output, os.path.basename(input_file))
         ensure_folder_exists(output_file)
 
         with open(input_file, "r", encoding="utf-8") as infile, open(
