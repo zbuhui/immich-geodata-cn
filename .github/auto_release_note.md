@@ -11,7 +11,7 @@
 
 以 `中国,江苏省,苏州市,昆山市,周市镇` 为例
 
-|示例|对应文件|数据增强|
+|示例|对应文件|数据增强<br>数据更多、定位更准但编码更慢|
 |:---|:---|:---|
 |苏州市|geodata.zip<br>geodata_admin_2.zip|geodata_full.zip<br>geodata_admin_2_full.zip|
 |昆山市|geodata_admin_3.zip|geodata_admin_3_full.zip|
@@ -22,4 +22,6 @@
 |苏州市 昆山市 周市镇|geodata_admin_2_admin_3_admin_4.zip|geodata_admin_2_admin_3_admin_4_full.zip|
 
 > [!WARNING]  
-> 受限于 Immich 反向地理编码原理，在接近边界时效果不佳，而使用级别更低的数据时更容易遇到边界问题从而导致识别错误，请注意
+> 受限于 Immich 自身反向地理编码原理，在接近边界时识别效果不佳，而使用级别更低的数据时更容易遇到边界问题，因此更容易导致识别错误，请注意
+>
+> 如果遇到该情况，可以尝试使用数据增强版本的数据，或者在 [GeoNames](https://www.geonames.org/) 提交相关位置的数据
