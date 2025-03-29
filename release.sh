@@ -8,6 +8,7 @@ mkdir -p output
 cd geodata
 bash release.sh
 cd ..
-mv geodata/geodata*.zip output
+mv geodata/output/geodata*.zip output
+rm -rf geodata/output
 
 zip -r output/i18n-iso-countries.zip i18n-iso-countries/langs

@@ -1,5 +1,17 @@
 import os
 from utils import logger, GEODATA_HEADER
+import argparse
+import shutil
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--full", action="store_true", help="Enable full mode")
+parser.add_argument(
+    "--output", type=str, default="./geoname_data/cities500.txt.tmp", help="Output cities500 file"
+)
+
+# 解析参数
+args = parser.parse_args()
 
 MIN_POPULATION = 100
 
@@ -7,6 +19,7 @@ MIN_POPULATION = 100
 data_base_dir = "./geoname_data"
 cities_file = os.path.join(data_base_dir, "cities500.txt")
 extra_data_folder = os.path.join(data_base_dir, "extra_data/")
+output_file = args.output
 
 need_finer_admin_2_list = [
     "CN.23.12324204",  # 上海
@@ -17,6 +30,8 @@ need_finer_admin_2_list = [
 
 
 def need_finer_data(data):
+    if args.full:
+        return True
     country_code = data[8]
     admin1_code = data[10]
     admin2_code = data[11]
@@ -36,7 +51,9 @@ with open(cities_file, "r") as f:
         existing_ids.add(d[0])
         existing_loc.add((d[4], d[5]))
 
-with open(cities_file, "a") as append_f:
+shutil.copyfile(cities_file, output_file)
+
+with open(output_file, "a") as append_f:
     # 遍历 extra_data 文件夹中的所有 txt 文件
     for file_name in os.listdir(extra_data_folder):
         if file_name.endswith(".txt"):

@@ -41,7 +41,7 @@ jobs:
         with:
           name: Auto Release ${{ env.TODAY }}
           artifacts: "output/*"
-          bodyFile: auto_release_note.md
+          bodyFile: .github/auto_release_note.md
           draft: false
           generateReleaseNotes: false
           commit: main

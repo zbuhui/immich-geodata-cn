@@ -171,6 +171,7 @@ cython_debug/
 .pypirc
 
 geodata/output
+geodata/geodata
 geodata/geoname_data
 geodata/*.zip
 output/

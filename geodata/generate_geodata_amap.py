@@ -5,12 +5,20 @@ import sys
 import csv
 from utils import logger, GEODATA_HEADER, load_geo_data
 from requests.adapters import HTTPAdapter, Retry
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--data-file", type=str, default="./geoname_data/cities500.txt", help="input geodata file")
+parser.add_argument("--country-code", type=str, default="CN", help="country code to be generated")
+# 解析参数
+args = parser.parse_args()
 
 AMAP_API_KEY = os.environ["AMAP_API_KEY"]
 AMAP_QPS = int(os.environ.get("AMAP_QPS", "3"))
 AMAP_BATCH_SIZE = int(os.environ.get("AMAP_BATCH_SIZE", "20"))
 
-GEONAME_DATA_FILE = "./geoname_data/cities500.txt"
+GEONAME_DATA_FILE = args.data_file
 
 s = requests.Session()
 
@@ -106,7 +114,7 @@ def query_and_store(coordinates_batch, output_file):
 
 
 def main():
-    country_code = "CN" if len(sys.argv) == 1 else sys.argv[1]
+    country_code = args.country_code
     logger.info(f"待处理国家码：{country_code}")
     if not os.path.isfile(GEONAME_DATA_FILE):
         raise Exception(f"文件 '{GEONAME_DATA_FILE}' 不存在，请下载后重试。")
