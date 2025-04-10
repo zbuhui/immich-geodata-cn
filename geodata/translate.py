@@ -98,7 +98,7 @@ def translate_cities500():
                 if country_code == "CN":
                     res = cn_pattern.format(**location)
                 else:
-                    res = location["admin_3"]
+                    res = location["admin_2"]
                     res = convert(res, "zh-cn")
 
                     # 处理同时存在简繁名字的场景，例如 	东京都/東京都
